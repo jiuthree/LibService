@@ -1,14 +1,13 @@
 package com.example.library.pro.service;
 
 import com.example.library.pro.constants.DocumentType;
-import com.example.library.pro.dao.ConferenceProceedingDao;
-import com.example.library.pro.dao.DocumentDao;
-import com.example.library.pro.dao.LibDocumentsDao;
-import com.example.library.pro.dao.PublisherDao;
+import com.example.library.pro.dao.*;
 import com.example.library.pro.exception.RequestException;
+import com.example.library.pro.module.Book;
 import com.example.library.pro.module.ConferenceProceeding;
 import com.example.library.pro.module.Document;
 import com.example.library.pro.module.LibDocuments;
+import com.example.library.pro.vo.BookVo;
 import com.example.library.pro.vo.ConferenceProceedingVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -33,6 +32,12 @@ public class DocumentService {
 
     @Autowired
     PublisherDao publisherDao;
+
+    @Autowired
+    BookDao bookDao;
+
+    @Autowired
+    AuthorDao authorDao;
 
     public Document getById(Long id) {
         Optional<Document> res = documentDao.findById(id);
@@ -90,6 +95,28 @@ public class DocumentService {
         //会议纪要的id和文档的id是一样的
         conferenceProceeding.setId(res.getId());
         return conferenceProceedingDao.save(conferenceProceeding);
+
+    }
+
+    public Book addBookVo(BookVo bookVo) {
+        Document document = new Document();
+        document.setType(DocumentType.Book);
+        document.setTitle(bookVo.getTitle());
+        document.setPublicationDate(bookVo.getPublicationDate());
+        if (!publisherDao.existsById(bookVo.getPublisherId())) {
+            throw new RequestException(HttpStatus.BAD_REQUEST, "publisher不存在");
+        }
+        document.setPublisherId(bookVo.getPublisherId());
+        Document res = documentDao.save(document);
+
+        Book book = new Book();
+        book.setISBN(bookVo.getISBN());
+        if(!authorDao.existsById(bookVo.getAuthorId())){
+            throw new RequestException(HttpStatus.BAD_REQUEST, "author不存在");
+        }
+        book.setAuthorId(bookVo.getAuthorId());
+        book.setId(res.getId());
+        return bookDao.save(book);
 
     }
 }

@@ -1,9 +1,11 @@
 package com.example.library.pro.controller;
 
+import com.example.library.pro.module.Book;
 import com.example.library.pro.module.ConferenceProceeding;
 import com.example.library.pro.module.Document;
 import com.example.library.pro.module.LibDocuments;
 import com.example.library.pro.service.DocumentService;
+import com.example.library.pro.vo.BookVo;
 import com.example.library.pro.vo.ConferenceProceedingVo;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -41,9 +43,17 @@ public class DocumentController {
     }
 
     @ApiOperation(value = "添加一个会议纪要")
-    @GetMapping("/add/conferenceproceeding")
+    @GetMapping("/add/conference-proceeding")
     public ResponseEntity<ConferenceProceeding> addConferenceProceeding(@RequestBody ConferenceProceedingVo conferenceProceedingVo){
         return ResponseEntity.ok(documentService.addConferenceProceedingVo(conferenceProceedingVo));
     }
+
+
+    @ApiOperation(value = "添加一个书籍")
+    @GetMapping("/add/book")
+    public ResponseEntity<Book> addBook(@RequestBody BookVo bookVo){
+        return ResponseEntity.ok(documentService.addBookVo(bookVo));
+    }
+
 
 }
