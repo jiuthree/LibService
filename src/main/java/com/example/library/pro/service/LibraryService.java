@@ -28,4 +28,17 @@ public class LibraryService {
     public List<Library> findAll() {
         return libraryDao.findAll();
     }
+
+    public Library add(Library library) {
+        return libraryDao.save(library);
+    }
+
+    public Void deleteById(Long id) {
+        if(!libraryDao.existsById(id)){
+            throw new RequestException(HttpStatus.BAD_REQUEST, "该图书馆不存在");
+        }
+        libraryDao.deleteById(id);
+
+        return null;
+    }
 }
