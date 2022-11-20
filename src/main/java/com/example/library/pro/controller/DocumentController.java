@@ -1,8 +1,10 @@
 package com.example.library.pro.controller;
 
+import com.example.library.pro.module.ConferenceProceeding;
 import com.example.library.pro.module.Document;
 import com.example.library.pro.module.LibDocuments;
 import com.example.library.pro.service.DocumentService;
+import com.example.library.pro.vo.ConferenceProceedingVo;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -36,6 +38,12 @@ public class DocumentController {
         return ResponseEntity.ok(documentService.addLibDocuments(libId,documentId));
        //需要自动生成新的文档编号  传参是图书馆id和文档id，number是自动生成的，totalNumber也是查询出来的
 
+    }
+
+    @ApiOperation(value = "添加一个会议纪要")
+    @GetMapping("/add/conferenceproceeding")
+    public ResponseEntity<ConferenceProceeding> addConferenceProceeding(@RequestBody ConferenceProceedingVo conferenceProceedingVo){
+        return ResponseEntity.ok(documentService.addConferenceProceedingVo(conferenceProceedingVo));
     }
 
 }
