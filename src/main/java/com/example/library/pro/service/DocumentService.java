@@ -111,9 +111,10 @@ public class DocumentService {
 
         Book book = new Book();
         book.setISBN(bookVo.getISBN());
-        if(!authorDao.existsById(bookVo.getAuthorId())){
+        if (!authorDao.existsById(bookVo.getAuthorId())) {
             throw new RequestException(HttpStatus.BAD_REQUEST, "author不存在");
         }
+        //书籍的id和文档的id是一样的
         book.setAuthorId(bookVo.getAuthorId());
         book.setId(res.getId());
         return bookDao.save(book);

@@ -20,7 +20,7 @@ public class AdminController {
 
     @ApiOperation(value = "查询所有读者")
     @GetMapping("/get/all/readers")
-    public ResponseEntity<List<Reader>> getAllReaders(){
+    public ResponseEntity<List<Reader>> getAllReaders() {
         return ResponseEntity.ok(adminService.getAllReaders());
     }
 }

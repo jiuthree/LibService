@@ -23,35 +23,35 @@ public class DocumentController {
 
     @ApiOperation(value = "查询文档")
     @GetMapping("")
-    public ResponseEntity<Document> getById(@RequestParam Long id){
+    public ResponseEntity<Document> getById(@RequestParam Long id) {
         return ResponseEntity.ok(documentService.getById(id));
     }
 
     @ApiOperation(value = "查询文档在图书馆的馆藏情况")
     @GetMapping("/get/library/inventory")
-    public ResponseEntity<List<LibDocuments>> getLibDocumentsById(@RequestParam Long libId, @RequestParam Long documentId){
-        return ResponseEntity.ok(documentService.getLibDocumentsById(libId,documentId));
+    public ResponseEntity<List<LibDocuments>> getLibDocumentsById(@RequestParam Long libId, @RequestParam Long documentId) {
+        return ResponseEntity.ok(documentService.getLibDocumentsById(libId, documentId));
     }
 
 
     @ApiOperation(value = "添加一个新的图书馆库存")
     @GetMapping("/update/library/inventory")
-    public ResponseEntity<LibDocuments> addLibDocuments(@RequestParam Long libId, @RequestParam Long documentId ){
-        return ResponseEntity.ok(documentService.addLibDocuments(libId,documentId));
-       //需要自动生成新的文档编号  传参是图书馆id和文档id，number是自动生成的，totalNumber也是查询出来的
+    public ResponseEntity<LibDocuments> addLibDocuments(@RequestParam Long libId, @RequestParam Long documentId) {
+        return ResponseEntity.ok(documentService.addLibDocuments(libId, documentId));
+        //需要自动生成新的文档编号  传参是图书馆id和文档id，number是自动生成的，totalNumber也是查询出来的
 
     }
 
     @ApiOperation(value = "添加一个会议纪要")
     @GetMapping("/add/conference-proceeding")
-    public ResponseEntity<ConferenceProceeding> addConferenceProceeding(@RequestBody ConferenceProceedingVo conferenceProceedingVo){
+    public ResponseEntity<ConferenceProceeding> addConferenceProceeding(@RequestBody ConferenceProceedingVo conferenceProceedingVo) {
         return ResponseEntity.ok(documentService.addConferenceProceedingVo(conferenceProceedingVo));
     }
 
 
     @ApiOperation(value = "添加一个书籍")
     @GetMapping("/add/book")
-    public ResponseEntity<Book> addBook(@RequestBody BookVo bookVo){
+    public ResponseEntity<Book> addBook(@RequestBody BookVo bookVo) {
         return ResponseEntity.ok(documentService.addBookVo(bookVo));
     }
 

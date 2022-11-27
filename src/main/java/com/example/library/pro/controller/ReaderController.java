@@ -4,11 +4,9 @@ import com.example.library.pro.dto.LoginDto;
 import com.example.library.pro.module.Reader;
 import com.example.library.pro.service.ReaderService;
 import com.example.library.pro.vo.ReaderVo;
-import io.swagger.annotations.ApiModelProperty;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
-import org.springframework.util.ObjectUtils;
 import org.springframework.web.bind.annotation.*;
 
 @RestController
@@ -26,7 +24,7 @@ public class ReaderController {
     @ApiOperation(value = "登录", httpMethod = "POST")
     @PostMapping("/login")
     public ResponseEntity<Reader> registerReader(@RequestBody LoginDto loginDto) {
-        return ResponseEntity.ok(readerService.login(loginDto.getPhoneNumber(),loginDto.getPassword()));
+        return ResponseEntity.ok(readerService.login(loginDto.getPhoneNumber(), loginDto.getPassword()));
     }
 
 
@@ -39,7 +37,7 @@ public class ReaderController {
 
     @ApiOperation(value = "查询读者")
     @GetMapping("")
-    public ResponseEntity<Reader> getReaderById(Long id){
+    public ResponseEntity<Reader> getReaderById(Long id) {
         return ResponseEntity.ok(readerService.getReaderById(id));
     }
 

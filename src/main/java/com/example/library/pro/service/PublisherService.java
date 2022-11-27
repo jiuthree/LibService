@@ -2,7 +2,6 @@ package com.example.library.pro.service;
 
 import com.example.library.pro.dao.PublisherDao;
 import com.example.library.pro.exception.RequestException;
-import com.example.library.pro.module.Library;
 import com.example.library.pro.module.Publisher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -33,7 +32,7 @@ public class PublisherService {
     }
 
     public Void deleteById(Long id) {
-        if(!publisherDao.existsById(id)){
+        if (!publisherDao.existsById(id)) {
             throw new RequestException(HttpStatus.BAD_REQUEST, "该发布者不存在");
         }
         publisherDao.deleteById(id);
