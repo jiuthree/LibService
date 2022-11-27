@@ -3,12 +3,11 @@ package com.example.library.pro.service;
 import com.example.library.pro.constants.DocumentType;
 import com.example.library.pro.dao.*;
 import com.example.library.pro.exception.RequestException;
-import com.example.library.pro.module.Book;
-import com.example.library.pro.module.ConferenceProceeding;
-import com.example.library.pro.module.Document;
-import com.example.library.pro.module.LibDocuments;
+import com.example.library.pro.module.*;
 import com.example.library.pro.vo.BookVo;
 import com.example.library.pro.vo.ConferenceProceedingVo;
+import com.example.library.pro.vo.JournalVo;
+import com.example.library.pro.vo.VolumeVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -38,6 +37,12 @@ public class DocumentService {
 
     @Autowired
     AuthorDao authorDao;
+    
+    @Autowired
+    JournalDao journalDao;
+    
+    @Autowired
+    VolumeDao volumeDao;
 
     public Document getById(Long id) {
         Optional<Document> res = documentDao.findById(id);
@@ -114,10 +119,39 @@ public class DocumentService {
         if (!authorDao.existsById(bookVo.getAuthorId())) {
             throw new RequestException(HttpStatus.BAD_REQUEST, "author不存在");
         }
-        //书籍的id和文档的id是一样的
+        
         book.setAuthorId(bookVo.getAuthorId());
+        //书籍的id和文档的id是一样的
         book.setId(res.getId());
         return bookDao.save(book);
 
+    }
+
+    public JournalVo addJournalVo(JournalVo journalVo) {
+        Document document = new Document();
+        document.setType(DocumentType.Journal);
+        document.setTitle(journalVo.getTitle());
+        document.setPublicationDate(journalVo.getPublicationDate());
+        if (!publisherDao.existsById(journalVo.getPublisherId())) {
+            throw new RequestException(HttpStatus.BAD_REQUEST, "publisher不存在");
+        }
+        document.setPublisherId(journalVo.getPublisherId());
+        Document res = documentDao.save(document);
+        Journal journal = new Journal();
+        journal.setId(res.getId());
+        journal.setName(journalVo.getName());
+        journal.setEditor(journalVo.getEditor());
+        journal.setScope(journalVo.getScope());
+        List<Volume> volumes = journalVo.getVolumes();
+        for(Volume volume:volumes){
+            volume.setJournalId(journal.getId());
+        }
+        
+        volumeDao.saveAll(volumes);
+        journalVo.setVolumes(volumeDao.findAllByJournalId(journal.getId()));
+        Journal savedJournal = journalDao.save(journal);
+        journal.setId(savedJournal.getId());
+
+        return journalVo;
     }
 }

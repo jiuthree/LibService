@@ -7,6 +7,7 @@ import com.example.library.pro.module.LibDocuments;
 import com.example.library.pro.service.DocumentService;
 import com.example.library.pro.vo.BookVo;
 import com.example.library.pro.vo.ConferenceProceedingVo;
+import com.example.library.pro.vo.JournalVo;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -54,6 +55,13 @@ public class DocumentController {
     public ResponseEntity<Book> addBook(@RequestBody BookVo bookVo) {
         return ResponseEntity.ok(documentService.addBookVo(bookVo));
     }
+
+    @ApiOperation(value = "添加一个journal")
+    @GetMapping("/add/journal")
+    public ResponseEntity<JournalVo> addJournal(@RequestBody JournalVo journalVo) {
+        return ResponseEntity.ok(documentService.addJournalVo(journalVo));
+    }
+
 
 
 }
