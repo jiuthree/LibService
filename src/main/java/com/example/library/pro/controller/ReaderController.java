@@ -51,4 +51,18 @@ public class ReaderController {
         return  ResponseEntity.ok(readerService.reserveDocument(reserveVo));
     }
 
+    @ApiOperation(value = "读者借用document")
+    @GetMapping("/borrow/document")
+    public ResponseEntity<ReserveAndBorrowList> borrowDocument(@RequestParam Long readerId,@RequestParam Long documentId,@RequestParam Long libId,@RequestParam Long number) {
+
+        return  ResponseEntity.ok(readerService.borrowDocument(readerId,documentId,libId,number));
+    }
+
+    @ApiOperation(value = "读者还书document")
+    @GetMapping("/return/document")
+    public ResponseEntity<ReserveAndBorrowList> returnDocument(@RequestParam Long readerId,@RequestParam Long documentId,@RequestParam Long libId,@RequestParam Long number) {
+
+        return  ResponseEntity.ok(readerService.returnDocument(readerId,documentId,libId,number));
+    }
+
 }

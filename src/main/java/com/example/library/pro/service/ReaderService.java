@@ -14,6 +14,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
+import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
@@ -29,6 +30,7 @@ public class ReaderService {
 
     @Autowired
     ReserveAndBorrowListDao reserveAndBorrowListDao;
+
 
     public Reader registerReader(ReaderVo readerVo) {
         Reader reader = new Reader();
@@ -154,5 +156,49 @@ public class ReaderService {
         reserveVo.setStatus(DocumentStatus.reserved);
 
         return reserveVo;
+    }
+
+    public ReserveAndBorrowList borrowDocument(Long readerId, Long documentId, Long libId, Long number) {
+        if (ObjectUtils.isEmpty(readerId) || ObjectUtils.isEmpty(documentId) || ObjectUtils.isEmpty(libId) || ObjectUtils.isEmpty(number)) {
+            throw new RequestException(HttpStatus.BAD_REQUEST, "读者Id，文档Id,图书馆Id和文档副本编号不能为空");
+        }
+        ReserveAndBorrowList record = reserveAndBorrowListDao.findByReaderIdAndDocumentIdAndLibIdAndNumber(readerId, documentId, libId, number);
+        if (record == null || record.getStatus() != DocumentStatus.reserved) {
+            throw new RequestException(HttpStatus.BAD_REQUEST, "没有查询到对应预定文档的记录，无法借书!");
+        }
+        record.setStatus(DocumentStatus.borrowed);
+        record.setBDateTime(LocalDateTime.now());
+
+        return record;
+    }
+
+    public ReserveAndBorrowList returnDocument(Long readerId, Long documentId, Long libId, Long number) {
+        if (ObjectUtils.isEmpty(readerId) || ObjectUtils.isEmpty(documentId) || ObjectUtils.isEmpty(libId) || ObjectUtils.isEmpty(number)) {
+            throw new RequestException(HttpStatus.BAD_REQUEST, "读者Id，文档Id,图书馆Id和文档副本编号不能为空");
+        }
+        ReserveAndBorrowList record = reserveAndBorrowListDao.findByReaderIdAndDocumentIdAndLibIdAndNumber(readerId, documentId, libId, number);
+        if (record == null || record.getStatus() != DocumentStatus.borrowed) {
+            throw new RequestException(HttpStatus.BAD_REQUEST, "没有查询到对应借取文档的记录，无法借书!");
+        }
+
+        record.setStatus(DocumentStatus.inLib);
+        record.setRDateTime(LocalDateTime.now());
+
+        Duration duration = Duration.between(record.getBDateTime(), record.getRDateTime());
+        if (duration.toDays() > 20) {
+            Reader reader = readerDao.findById(readerId).get();
+            Long cost = reader.getCost();
+            if (ObjectUtils.isEmpty(cost)) {
+                cost = 0L;
+            }
+            cost += (duration.toDays() - 20) * 20;
+            reader.setCost(cost);
+            readerDao.save(reader);
+        }
+
+        reserveAndBorrowListDao.deleteById(record.getId());
+
+        return record;
+
     }
 }

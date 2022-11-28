@@ -22,7 +22,7 @@ public class ReserveVo {
     @ApiModelProperty(value = "图书馆id")
     Long libId;
 
-    @ApiModelProperty(value = "文档副本编号，前端不用传，后端会返回")
+    @ApiModelProperty(value = "文档副本编号，预定书籍的时候前端不用传，后端会返回")
     Long number;
 
     @ApiModelProperty(value = "文档状态，前端不用传，后端会返回")

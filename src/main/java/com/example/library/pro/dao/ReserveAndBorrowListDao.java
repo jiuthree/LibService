@@ -8,6 +8,8 @@ import java.util.List;
 public interface ReserveAndBorrowListDao extends JpaRepository<ReserveAndBorrowList,Long> {
     List<ReserveAndBorrowList> findAllByReaderIdAndDocumentIdAndLibId(Long readerId,Long documentId,Long libId);
 
+    ReserveAndBorrowList findByReaderIdAndDocumentIdAndLibIdAndNumber(Long readerId,Long documentId,Long libId,Long number);
+
     List<ReserveAndBorrowList> findAllByReaderId(Long readerId);
 
     List<ReserveAndBorrowList> findAllByDocumentIdAndLibId(Long documentId,Long libId);
