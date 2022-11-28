@@ -1,4 +1,4 @@
-package com.example.library.pro.module;
+package com.example.library.pro.vo;
 
 import com.example.library.pro.constants.DocumentStatus;
 import io.swagger.annotations.ApiModelProperty;
@@ -6,19 +6,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import javax.persistence.*;
 import java.time.LocalDateTime;
 
 @Data
-@NoArgsConstructor
 @AllArgsConstructor
-@Entity
-@Table
-public class ReserveAndBorrowList {
-    @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    @ApiModelProperty(value = "id")
-    Long id;
+@NoArgsConstructor
+public class ReserveVo {
 
     @ApiModelProperty(value = "读者id")
     Long readerId;
@@ -29,18 +22,18 @@ public class ReserveAndBorrowList {
     @ApiModelProperty(value = "图书馆id")
     Long libId;
 
-    @ApiModelProperty(value = "文档编号")
+    @ApiModelProperty(value = "文档副本编号，前端不用传，后端会返回")
     Long number;
 
-    @ApiModelProperty(value = "文档状态")
+    @ApiModelProperty(value = "文档状态，前端不用传，后端会返回")
     DocumentStatus status;
 
-    @ApiModelProperty(value = "借书日期")
+    @ApiModelProperty(value = "借书日期，前端不用传，后端会返回")
     LocalDateTime bDateTime;
 
-    @ApiModelProperty(value = "还书日期")
+    @ApiModelProperty(value = "还书日期，前端不用传，后端会返回")
     LocalDateTime rDateTime;
 
-    @ApiModelProperty(value = "预定日期")
+    @ApiModelProperty(value = "预定日期，前端不用传，后端会返回")
     LocalDateTime reserveDate;
 }

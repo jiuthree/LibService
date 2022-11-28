@@ -3,8 +3,10 @@ package com.example.library.pro.controller;
 import com.example.library.pro.dto.LoginDto;
 import com.example.library.pro.module.Document;
 import com.example.library.pro.module.Reader;
+import com.example.library.pro.module.ReserveAndBorrowList;
 import com.example.library.pro.service.ReaderService;
 import com.example.library.pro.vo.ReaderVo;
+import com.example.library.pro.vo.ReserveVo;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -42,5 +44,11 @@ public class ReaderController {
         return ResponseEntity.ok(readerService.getReaderById(id));
     }
 
+    @ApiOperation(value = "读者预定document")
+    @PostMapping("/reserve/document")
+    public ResponseEntity<ReserveVo> reserveDocument(@RequestBody ReserveVo reserveVo) {
+
+        return  ResponseEntity.ok(readerService.reserveDocument(reserveVo));
+    }
 
 }
