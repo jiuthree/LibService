@@ -28,6 +28,19 @@ public class DocumentController {
         return ResponseEntity.ok(documentService.getById(id));
     }
 
+    @ApiOperation(value = "查询所有的在线书籍")
+    @GetMapping("/all")
+    public ResponseEntity<List<Document>> findAll() {
+        return ResponseEntity.ok(documentService.findAll());
+    }
+
+    @ApiOperation(value = "根据标题模糊查询所有的在线书籍")
+    @GetMapping("/findByTitleLike")
+    public ResponseEntity<List<Document>> findByTitle(@RequestParam String title) {
+        return ResponseEntity.ok(documentService.findByTitleLike(title));
+    }
+
+
     @ApiOperation(value = "查询文档在图书馆的馆藏情况")
     @GetMapping("/get/library/inventory")
     public ResponseEntity<List<LibDocuments>> getLibDocumentsById(@RequestParam Long libId, @RequestParam Long documentId) {

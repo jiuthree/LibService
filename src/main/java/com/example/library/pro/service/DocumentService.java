@@ -52,6 +52,14 @@ public class DocumentService {
         return res.get();
     }
 
+    public List<Document> findAll(){
+        return documentDao.findAll();
+    }
+
+    public List<Document> findByTitleLike(String title){
+        return documentDao.findByTitleLike("%"+title+"%");
+    }
+
 
     public List<LibDocuments> getLibDocumentsById(Long libId, Long documentId) {
         if (ObjectUtils.isEmpty(libId) || ObjectUtils.isEmpty(documentId)) {

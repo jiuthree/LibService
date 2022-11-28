@@ -1,6 +1,7 @@
 package com.example.library.pro.controller;
 
 import com.example.library.pro.dto.LoginDto;
+import com.example.library.pro.module.Document;
 import com.example.library.pro.module.Reader;
 import com.example.library.pro.service.ReaderService;
 import com.example.library.pro.vo.ReaderVo;
