@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface LibDocumentsDao extends JpaRepository<LibDocuments,Long> {
     List<LibDocuments> findByLibIdAndDocumentId(Long libId,Long documentId );
+
+    List<LibDocuments> findAllByDocumentId(Long documentId);
 }

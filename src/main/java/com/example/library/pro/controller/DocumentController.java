@@ -7,6 +7,7 @@ import com.example.library.pro.module.LibDocuments;
 import com.example.library.pro.service.DocumentService;
 import com.example.library.pro.vo.BookVo;
 import com.example.library.pro.vo.ConferenceProceedingVo;
+import com.example.library.pro.vo.DocumentDetailVo;
 import com.example.library.pro.vo.JournalVo;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,6 +39,12 @@ public class DocumentController {
     @GetMapping("/findByTitleLike")
     public ResponseEntity<List<Document>> findByTitle(@RequestParam String title) {
         return ResponseEntity.ok(documentService.findByTitleLike(title));
+    }
+
+    @ApiOperation(value = "查询文档全部详情")
+    @GetMapping("/detail")
+    public ResponseEntity<DocumentDetailVo> getDetailById(@RequestParam Long id) {
+        return ResponseEntity.ok(documentService.getDetailById(id));
     }
 
 

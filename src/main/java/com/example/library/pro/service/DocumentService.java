@@ -4,15 +4,13 @@ import com.example.library.pro.constants.DocumentType;
 import com.example.library.pro.dao.*;
 import com.example.library.pro.exception.RequestException;
 import com.example.library.pro.module.*;
-import com.example.library.pro.vo.BookVo;
-import com.example.library.pro.vo.ConferenceProceedingVo;
-import com.example.library.pro.vo.JournalVo;
-import com.example.library.pro.vo.VolumeVo;
+import com.example.library.pro.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ObjectUtils;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -43,6 +41,9 @@ public class DocumentService {
     
     @Autowired
     VolumeDao volumeDao;
+
+    @Autowired
+    LibraryDao libraryDao;
 
     public Document getById(Long id) {
         Optional<Document> res = documentDao.findById(id);
@@ -161,5 +162,82 @@ public class DocumentService {
         journal.setId(savedJournal.getId());
 
         return journalVo;
+    }
+
+    public DocumentDetailVo getDetailById(Long id) {
+
+        DocumentDetailVo documentDetailVo = new DocumentDetailVo();
+        Document document = getById(id);
+        documentDetailVo.setId(document.getId());
+        documentDetailVo.setTitle(document.getTitle());
+        if (!publisherDao.existsById(document.getPublisherId())) {
+            throw new RequestException(HttpStatus.BAD_REQUEST, "publisher不存在");
+        }
+        documentDetailVo.setPublisher(publisherDao.findById(document.getPublisherId()).get());
+        documentDetailVo.setPublicationDate(document.getPublicationDate());
+        documentDetailVo.setType(document.getType());
+        documentDetailVo.setLibDocumentVos(new ArrayList<>());
+        List<LibDocuments> records = libDocumentsDao.findAllByDocumentId(document.getId());
+        for(LibDocuments libDocuments: records){
+            LibDocumentVo libDocumentVo = new LibDocumentVo();
+            libDocumentVo.setId(libDocuments.getId());
+            libDocumentVo.setDocumentId(document.getId());
+            libDocumentVo.setLibId(libDocuments.getLibId());
+            Optional<Library> library = libraryDao.findById(libDocuments.getLibId());
+            if(library.isPresent()){
+                libDocumentVo.setLibraryName(library.get().getName());
+                libDocumentVo.setLibraryLocation(library.get().getLocation());
+            }
+            libDocumentVo.setNumber(libDocuments.getNumber());
+            libDocumentVo.setTotalNumber(libDocuments.getTotalNumber());
+            documentDetailVo.getLibDocumentVos().add(libDocumentVo);
+        }
+        documentDetailVo.setType(document.getType());
+        DocumentContent documentContent = new DocumentContent();
+        switch (document.getType()){
+            case ConferenceProceeding:{
+                ConferenceProceedingVo conferenceProceedingVo = new ConferenceProceedingVo();
+                Optional<ConferenceProceeding> conferenceProceeding = conferenceProceedingDao.findById(document.getId());
+                if(!conferenceProceeding.isPresent()){
+                    throw new RequestException(HttpStatus.BAD_REQUEST, "conferenceProceeding不存在,documentId:"+document.getId());
+                }
+                conferenceProceedingVo.setEditor(conferenceProceeding.get().getEditor());
+                conferenceProceedingVo.setLocation(conferenceProceeding.get().getLocation());
+                conferenceProceedingVo.setDate(conferenceProceeding.get().getDate());
+                documentContent.setConferenceProceedingVo(conferenceProceedingVo);
+                break;
+            }
+            case Book:{
+                BookVo bookVo = new BookVo();
+                Optional<Book> book = bookDao.findById(document.getId());
+                if(!book.isPresent()){
+                    throw new RequestException(HttpStatus.BAD_REQUEST, "book不存在,documentId:"+document.getId());
+                }
+                bookVo.setISBN(book.get().getISBN());
+                bookVo.setAuthorId(book.get().getAuthorId());
+                documentContent.setBookVo(bookVo);
+                break;
+            }
+            case Journal:{
+                JournalVo journalVo = new JournalVo();
+                Optional<Journal> journal = journalDao.findById(document.getId());
+                if(!journal.isPresent()){
+                    throw new RequestException(HttpStatus.BAD_REQUEST, "journal不存在,documentId:"+document.getId());
+                }
+                journalVo.setName(journal.get().getName());
+                journalVo.setScope(journal.get().getScope());
+                journalVo.setEditor(journal.get().getEditor());
+                journalVo.setId(journal.get().getId());
+                journalVo.setVolumes(volumeDao.findAllByJournalId(journal.get().getId()));
+
+                documentContent.setJournalVo(journalVo);
+                break;
+            }
+
+        }
+
+        documentDetailVo.setDocumentContent(documentContent);
+
+        return documentDetailVo;
     }
 }
