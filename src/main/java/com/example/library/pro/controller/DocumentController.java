@@ -41,6 +41,12 @@ public class DocumentController {
         return ResponseEntity.ok(documentService.findByTitleLike(title));
     }
 
+    @ApiOperation(value = "根据发布者名称模糊查询所有的在线书籍")
+    @GetMapping("/findByPublisherName")
+    public ResponseEntity<List<Document>> findByPublisherName(@RequestParam String publisherName) {
+        return ResponseEntity.ok(documentService.findByPublisherName(publisherName));
+    }
+
     @ApiOperation(value = "查询文档全部详情")
     @GetMapping("/detail")
     public ResponseEntity<DocumentDetailVo> getDetailById(@RequestParam Long id) {

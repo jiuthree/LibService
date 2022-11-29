@@ -240,4 +240,15 @@ public class DocumentService {
 
         return documentDetailVo;
     }
+
+    public List<Document> findByPublisherName(String publisherName) {
+        ArrayList<Document> res = new ArrayList<>();
+        List<Publisher> publishers = publisherDao.findByNameLike("%" + publisherName + "%");
+        for(Publisher publisher:publishers){
+            List<Document> documents = documentDao.findAllByPublisherId(publisher.getId());
+            res.addAll(documents);
+        }
+        return res;
+
+    }
 }

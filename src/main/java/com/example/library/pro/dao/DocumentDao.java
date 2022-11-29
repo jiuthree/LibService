@@ -7,4 +7,6 @@ import java.util.List;
 
 public interface DocumentDao extends JpaRepository<Document,Long> {
      List<Document> findByTitleLike(String title);
+
+     List<Document> findAllByPublisherId(Long publisherId);
 }
