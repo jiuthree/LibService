@@ -10,8 +10,8 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class LoginDto {
 
-    @ApiModelProperty(value = "电话号码")
-    String phoneNumber;
+    @ApiModelProperty(value = "管理员登录id")
+    Long id;
 
     @ApiModelProperty(value = "密码")
     String password;

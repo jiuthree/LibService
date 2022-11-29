@@ -38,4 +38,7 @@ public class Reader {
 
     @ApiModelProperty(value = "读者类型")
     ReaderType type;
+
+    @ApiModelProperty(value = "读者的卡号，作为读者登录使用")
+    Long cardNumber;
 }

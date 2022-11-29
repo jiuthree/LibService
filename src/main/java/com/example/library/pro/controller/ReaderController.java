@@ -24,11 +24,18 @@ public class ReaderController {
         return ResponseEntity.ok(readerService.registerReader(readerVo));
     }
 
-    @ApiOperation(value = "登录", httpMethod = "POST")
-    @PostMapping("/login")
-    public ResponseEntity<Reader> registerReader(@RequestBody LoginDto loginDto) {
-        return ResponseEntity.ok(readerService.login(loginDto.getPhoneNumber(), loginDto.getPassword()));
+    @ApiOperation(value = "管理员登录", httpMethod = "POST")
+    @PostMapping("/admin/login")
+    public ResponseEntity<Reader> adminLogin(@RequestBody LoginDto loginDto) {
+        return ResponseEntity.ok(readerService.login(loginDto.getId(), loginDto.getPassword()));
     }
+
+    @ApiOperation(value = "读者登录", httpMethod = "GET")
+    @GetMapping("/reader/login")
+    public ResponseEntity<Reader> readerLogin(@RequestParam Long cardNumber) {
+        return ResponseEntity.ok(readerService.readerLogin(cardNumber));
+    }
+
 
 
     @ApiOperation(value = "老读者注销")

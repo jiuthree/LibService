@@ -38,18 +38,18 @@ public class ReaderService {
         reader.setName(readerVo.getName());
         reader.setType(readerVo.getType());
 
-        if (ObjectUtils.isEmpty(readerVo.getPhoneNumber()) || ObjectUtils.isEmpty(readerVo.getPassword())) {
-            throw new RequestException(HttpStatus.BAD_REQUEST, "手机号和密码不能为空");
+        if (ObjectUtils.isEmpty(readerVo.getCardNumber()) ) {
+            throw new RequestException(HttpStatus.BAD_REQUEST, "读者卡号不能为空");
         }
 
-        Optional<Reader> res = readerDao.findByPhoneNumber(readerVo.getPhoneNumber());
+        Optional<Reader> res = readerDao.findByCardNumber(readerVo.getCardNumber());
         if (res.isPresent()) {
-            throw new RequestException(HttpStatus.BAD_REQUEST, "该手机号已经被注册");
+            throw new RequestException(HttpStatus.BAD_REQUEST, "该读者卡号已经被注册");
         }
 
 
         reader.setPhoneNumber(readerVo.getPhoneNumber());
-        reader.setPassword(readerVo.getPassword());
+        reader.setCardNumber(readerVo.getCardNumber());
         return readerDao.save(reader);
     }
 
@@ -63,11 +63,11 @@ public class ReaderService {
 
     }
 
-    public Reader login(String phoneNumber, String password) {
-        if (ObjectUtils.isEmpty(phoneNumber) || ObjectUtils.isEmpty(password)) {
-            throw new RequestException(HttpStatus.BAD_REQUEST, "手机号和密码不能为空");
+    public Reader login(Long id, String password) {
+        if (ObjectUtils.isEmpty(id) || ObjectUtils.isEmpty(password)) {
+            throw new RequestException(HttpStatus.BAD_REQUEST, "id号和密码不能为空");
         }
-        Optional<Reader> res = readerDao.findByPhoneNumber(phoneNumber);
+        Optional<Reader> res = readerDao.findById(id);
         if (!res.isPresent()) {
             throw new RequestException(HttpStatus.BAD_REQUEST, "该账号不存在");
         }
@@ -200,5 +200,18 @@ public class ReaderService {
 
         return record;
 
+    }
+
+    public Reader readerLogin(Long cardNumber) {
+        if (ObjectUtils.isEmpty(cardNumber) ) {
+            throw new RequestException(HttpStatus.BAD_REQUEST, "card number不能为空");
+        }
+        Optional<Reader> res = readerDao.findByCardNumber(cardNumber);
+        if (!res.isPresent()) {
+            throw new RequestException(HttpStatus.BAD_REQUEST, "该账号不存在");
+        }
+
+
+        return res.get();
     }
 }

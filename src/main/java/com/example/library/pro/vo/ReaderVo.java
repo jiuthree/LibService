@@ -23,8 +23,9 @@ public class ReaderVo {
     @ApiModelProperty(value = "读者类型")
     ReaderType type;
 
-    @ApiModelProperty(value = "密码")
-    String password;
+    @ApiModelProperty(value = "读者的卡号，作为读者登录使用")
+    Long cardNumber;
+
 
 
 }

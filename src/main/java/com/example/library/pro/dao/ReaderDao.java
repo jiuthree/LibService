@@ -9,5 +9,6 @@ public interface ReaderDao extends JpaRepository<Reader,Long> {
 
     Optional<Reader> findByPhoneNumber(String phoneNumber);
 
+    Optional<Reader> findByCardNumber(Long cardNumber);
 
 }
