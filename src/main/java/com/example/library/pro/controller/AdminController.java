@@ -7,6 +7,7 @@ import com.example.library.pro.service.DocumentService;
 import com.example.library.pro.vo.LibDocumentDetailVo;
 import com.example.library.pro.vo.LibraryTop10Documents;
 import com.example.library.pro.vo.LibraryTop10Readers;
+import com.example.library.pro.vo.YearTop10Documents;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -62,10 +63,17 @@ public class AdminController {
 
     }
 
-    @ApiOperation(value = "打每个图书馆分区排行前10的借的书籍")
+    @ApiOperation(value = "打印每个图书馆分区排行前10的借的书籍")
     @GetMapping("/library/top10/documents")
     public ResponseEntity<List<LibraryTop10Documents>> findTop10Documents() {
         return ResponseEntity.ok(adminService.findTop10Documents());
+
+    }
+
+    @ApiOperation(value = "打印今年10本最流行的书籍  ")
+    @GetMapping("/year/top10/documents")
+    public ResponseEntity<List<YearTop10Documents>> findYearlyTop10Documents() {
+        return ResponseEntity.ok(adminService.findYearlyTop10Documents());
 
     }
 

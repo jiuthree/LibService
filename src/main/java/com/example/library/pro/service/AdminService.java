@@ -2,13 +2,11 @@ package com.example.library.pro.service;
 
 import com.example.library.pro.dao.*;
 import com.example.library.pro.module.*;
-import com.example.library.pro.vo.LibDocumentDetailVo;
-import com.example.library.pro.vo.LibraryTop10Documents;
-import com.example.library.pro.vo.LibraryTop10Readers;
-import com.example.library.pro.vo.TopReader;
+import com.example.library.pro.vo.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDateTime;
 import java.util.*;
 import java.util.stream.Collectors;
 
@@ -104,6 +102,7 @@ public class AdminService {
             LibraryTop10Documents libraryTop10Documents = new LibraryTop10Documents();
             libraryTop10Documents.setLibrary(library);
             libraryTop10Documents.setTopDocuments(new ArrayList<>());
+            libraryTop10Documents.setBorrowedCounts(new ArrayList<>());
 
             List<ReserveAndBorrowList> records = reserveAndBorrowListDao.findAllByLibIdAndIsCompleted(library.getId(), true);
 
@@ -115,12 +114,14 @@ public class AdminService {
                     );
 
             Map<Long, Long> finalMap = new LinkedHashMap<>();
+
             result.entrySet().stream()
                     .sorted(Map.Entry.<Long, Long>comparingByValue()
                             .reversed()).forEachOrdered(e -> {
                         Optional<Document> document = documentDao.findById(e.getKey());
                         if (document.isPresent()) {
                             libraryTop10Documents.getTopDocuments().add(document.get());
+                            libraryTop10Documents.getBorrowedCounts().add(e.getValue());
                         }
 
                         finalMap.put(e.getKey(), e.getValue());
@@ -128,10 +129,49 @@ public class AdminService {
 
             if (libraryTop10Documents.getTopDocuments().size() > 10) {
                 libraryTop10Documents.setTopDocuments(libraryTop10Documents.getTopDocuments().subList(0, 10));
+                libraryTop10Documents.setBorrowedCounts(libraryTop10Documents.getBorrowedCounts().subList(0,10));
             }
             res.add(libraryTop10Documents);
         }
 
+        return res;
+    }
+
+    public List<YearTop10Documents> findYearlyTop10Documents() {
+        ArrayList<YearTop10Documents> res = new ArrayList<>();
+        int year = LocalDateTime.now().getYear();
+        List<ReserveAndBorrowList> records = reserveAndBorrowListDao.findAllByIsCompleted(true);
+        records = records.stream().filter(reserveAndBorrowList -> {
+            int timeOfyear = reserveAndBorrowList.getBDateTime().getYear();
+            return  year - timeOfyear == 0;
+        }).collect(Collectors.toList());
+
+        Map<Long, Long> result =
+                records.stream().collect(
+                        Collectors.groupingBy(
+                                ReserveAndBorrowList::getDocumentId, Collectors.counting()
+                        )
+                );
+        Map<Long, Long> finalMap = new LinkedHashMap<>();
+
+
+        result.entrySet().stream()
+                .sorted(Map.Entry.<Long, Long>comparingByValue()
+                        .reversed()).forEachOrdered(e -> {
+                    Optional<Document> document = documentDao.findById(e.getKey());
+                    if (document.isPresent()) {
+                        YearTop10Documents yearTop10Documents = new YearTop10Documents();
+                        yearTop10Documents.setDocument(document.get());
+                        yearTop10Documents.setBorrowedNums(e.getValue());
+                        res.add(yearTop10Documents);
+                    }
+
+                    finalMap.put(e.getKey(), e.getValue());
+                });
+
+        if(res.size()>10){
+           return res.subList(0,10);
+        }
         return res;
     }
 }
