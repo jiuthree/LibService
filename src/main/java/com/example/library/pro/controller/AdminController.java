@@ -4,6 +4,7 @@ import com.example.library.pro.module.LibDocuments;
 import com.example.library.pro.module.Reader;
 import com.example.library.pro.service.AdminService;
 import com.example.library.pro.service.DocumentService;
+import com.example.library.pro.vo.LibDocumentDetailVo;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -44,5 +45,14 @@ public class AdminController {
         //需要自动生成新的文档编号  传参是图书馆id和文档id，number是自动生成的，totalNumber也是查询出来的
 
     }
+
+    @ApiOperation(value = "查询图书馆库存及其状态")
+    @GetMapping("/search/documentCopy")
+    public ResponseEntity<List<LibDocumentDetailVo>> searchDocumentCopyStatus(@RequestParam Long documentId, @RequestParam Long number) {
+        return ResponseEntity.ok(adminService.searchDocumentCopyStatus(documentId,number));
+
+
+    }
+
 
 }

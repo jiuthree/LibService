@@ -13,4 +13,6 @@ public interface ReserveAndBorrowListDao extends JpaRepository<ReserveAndBorrowL
     List<ReserveAndBorrowList> findAllByReaderId(Long readerId);
 
     List<ReserveAndBorrowList> findAllByDocumentIdAndLibId(Long documentId,Long libId);
+
+    List<ReserveAndBorrowList> findAllByDocumentIdAndLibIdAndAndNumber(Long documentId,Long libId,Long number);
 }
