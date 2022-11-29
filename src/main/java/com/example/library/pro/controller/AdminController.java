@@ -4,10 +4,7 @@ import com.example.library.pro.module.LibDocuments;
 import com.example.library.pro.module.Reader;
 import com.example.library.pro.service.AdminService;
 import com.example.library.pro.service.DocumentService;
-import com.example.library.pro.vo.LibDocumentDetailVo;
-import com.example.library.pro.vo.LibraryTop10Documents;
-import com.example.library.pro.vo.LibraryTop10Readers;
-import com.example.library.pro.vo.YearTop10Documents;
+import com.example.library.pro.vo.*;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -70,10 +67,17 @@ public class AdminController {
 
     }
 
-    @ApiOperation(value = "打印今年10本最流行的书籍  ")
+    @ApiOperation(value = "打印今年10本最流行的书籍")
     @GetMapping("/year/top10/documents")
     public ResponseEntity<List<YearTop10Documents>> findYearlyTop10Documents() {
         return ResponseEntity.ok(adminService.findYearlyTop10Documents());
+
+    }
+
+    @ApiOperation(value = "查询每一个读者的平均罚款(单个读者，单独算罚款，而且不罚款的次数要算进去)")
+    @GetMapping("/reader/average-fine-paid")
+    public ResponseEntity<List<ReaderPaidInfo>> findReaderAverageCost() {
+        return ResponseEntity.ok(adminService.findReaderAverageCost());
 
     }
 

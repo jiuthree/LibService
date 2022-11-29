@@ -129,7 +129,7 @@ public class AdminService {
 
             if (libraryTop10Documents.getTopDocuments().size() > 10) {
                 libraryTop10Documents.setTopDocuments(libraryTop10Documents.getTopDocuments().subList(0, 10));
-                libraryTop10Documents.setBorrowedCounts(libraryTop10Documents.getBorrowedCounts().subList(0,10));
+                libraryTop10Documents.setBorrowedCounts(libraryTop10Documents.getBorrowedCounts().subList(0, 10));
             }
             res.add(libraryTop10Documents);
         }
@@ -143,7 +143,7 @@ public class AdminService {
         List<ReserveAndBorrowList> records = reserveAndBorrowListDao.findAllByIsCompleted(true);
         records = records.stream().filter(reserveAndBorrowList -> {
             int timeOfyear = reserveAndBorrowList.getBDateTime().getYear();
-            return  year - timeOfyear == 0;
+            return year - timeOfyear == 0;
         }).collect(Collectors.toList());
 
         Map<Long, Long> result =
@@ -169,9 +169,47 @@ public class AdminService {
                     finalMap.put(e.getKey(), e.getValue());
                 });
 
-        if(res.size()>10){
-           return res.subList(0,10);
+        if (res.size() > 10) {
+            return res.subList(0, 10);
         }
+        return res;
+    }
+
+    public List<ReaderPaidInfo> findReaderAverageCost() {
+        ArrayList<ReaderPaidInfo> res = new ArrayList<>();
+
+        List<ReserveAndBorrowList> records = reserveAndBorrowListDao.findAllByIsCompleted(true);
+
+        Map<Long, Long> result =
+                records.stream().collect(
+                        Collectors.groupingBy(
+                                ReserveAndBorrowList::getReaderId, Collectors.counting()
+                        )
+                );
+
+        Map<Long, Long> finalMap = new LinkedHashMap<>();
+        result.entrySet().stream()
+                .sorted(Map.Entry.<Long, Long>comparingByValue()
+                        .reversed()).forEachOrdered(e -> {
+                    Optional<Reader> reader = readerDao.findById(e.getKey());
+                    if (reader.isPresent() && e.getValue().longValue() > 0L) {
+                        ReaderPaidInfo readerPaidInfo = new ReaderPaidInfo();
+                        readerPaidInfo.setReader(reader.get());
+                        readerPaidInfo.setAverageFinePaid(reader.get().getCost().doubleValue() / e.getValue());
+                        res.add(readerPaidInfo);
+                    }
+                    finalMap.put(e.getKey(), e.getValue());
+                });
+        res.sort((o1, o2) -> {
+            double value = o1.getAverageFinePaid() - o2.getAverageFinePaid();
+            if (value > 0.0) {
+                return -1;
+            }
+            if (value == 0.0) {
+                return 0;
+            }
+            return 1;
+        });
         return res;
     }
 }
