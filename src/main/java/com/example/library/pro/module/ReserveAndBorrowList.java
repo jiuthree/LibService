@@ -43,4 +43,7 @@ public class ReserveAndBorrowList {
 
     @ApiModelProperty(value = "预定日期")
     LocalDateTime reserveDate;
+
+    @ApiModelProperty(value = "借阅是否完成")
+    Boolean isCompleted;
 }

@@ -7,6 +7,7 @@ import com.example.library.pro.module.ReserveAndBorrowList;
 import com.example.library.pro.service.ReaderService;
 import com.example.library.pro.vo.ReaderVo;
 import com.example.library.pro.vo.ReserveVo;
+import com.example.library.pro.vo.ReturnVo;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -67,7 +68,7 @@ public class ReaderController {
 
     @ApiOperation(value = "读者还书document")
     @GetMapping("/return/document")
-    public ResponseEntity<ReserveAndBorrowList> returnDocument(@RequestParam Long readerId,@RequestParam Long documentId,@RequestParam Long libId,@RequestParam Long number) {
+    public ResponseEntity<ReturnVo> returnDocument(@RequestParam Long readerId, @RequestParam Long documentId, @RequestParam Long libId, @RequestParam Long number) {
 
         return  ResponseEntity.ok(readerService.returnDocument(readerId,documentId,libId,number));
     }

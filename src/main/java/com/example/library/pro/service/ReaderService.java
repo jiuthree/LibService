@@ -9,6 +9,7 @@ import com.example.library.pro.module.Reader;
 import com.example.library.pro.module.ReserveAndBorrowList;
 import com.example.library.pro.vo.ReaderVo;
 import com.example.library.pro.vo.ReserveVo;
+import com.example.library.pro.vo.ReturnVo;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
@@ -18,6 +19,7 @@ import java.time.Duration;
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.Optional;
+import java.util.stream.Collectors;
 
 @Service
 public class ReaderService {
@@ -38,7 +40,7 @@ public class ReaderService {
         reader.setName(readerVo.getName());
         reader.setType(readerVo.getType());
 
-        if (ObjectUtils.isEmpty(readerVo.getCardNumber()) ) {
+        if (ObjectUtils.isEmpty(readerVo.getCardNumber())) {
             throw new RequestException(HttpStatus.BAD_REQUEST, "读者卡号不能为空");
         }
 
@@ -112,6 +114,9 @@ public class ReaderService {
                 if (reserveAndBorrowList.getNumber() == null || reserveAndBorrowList.getNumber() != number) {
                     continue;
                 }
+                if (reserveAndBorrowList.getIsCompleted() != null && reserveAndBorrowList.getIsCompleted()) {
+                    continue;
+                }
                 if (reserveAndBorrowList.getStatus() == DocumentStatus.reserved || reserveAndBorrowList.getStatus() == DocumentStatus.borrowed) {
                     isAvailable = false;
                     break;
@@ -162,27 +167,52 @@ public class ReaderService {
         if (ObjectUtils.isEmpty(readerId) || ObjectUtils.isEmpty(documentId) || ObjectUtils.isEmpty(libId) || ObjectUtils.isEmpty(number)) {
             throw new RequestException(HttpStatus.BAD_REQUEST, "读者Id，文档Id,图书馆Id和文档副本编号不能为空");
         }
-        ReserveAndBorrowList record = reserveAndBorrowListDao.findByReaderIdAndDocumentIdAndLibIdAndNumber(readerId, documentId, libId, number);
-        if (record == null || record.getStatus() != DocumentStatus.reserved) {
+        List<ReserveAndBorrowList> records = reserveAndBorrowListDao.findAllByReaderIdAndDocumentIdAndLibIdAndNumber(readerId, documentId, libId, number);
+
+        records = records.stream().filter(reserveAndBorrowList -> {
+            boolean isReserved = reserveAndBorrowList.getStatus() == DocumentStatus.reserved;
+            boolean isUnCompleted = reserveAndBorrowList.getIsCompleted() == null || !reserveAndBorrowList.getIsCompleted();
+            return isReserved && isUnCompleted;
+        }).collect(Collectors.toList());
+
+        if (records == null || records.size() == 0) {
             throw new RequestException(HttpStatus.BAD_REQUEST, "没有查询到对应预定文档的记录，无法借书!");
         }
+
+        ReserveAndBorrowList record = records.get(0);
+
+
         record.setStatus(DocumentStatus.borrowed);
         record.setBDateTime(LocalDateTime.now());
+        reserveAndBorrowListDao.save(record);
 
         return record;
     }
 
-    public ReserveAndBorrowList returnDocument(Long readerId, Long documentId, Long libId, Long number) {
+    public ReturnVo returnDocument(Long readerId, Long documentId, Long libId, Long number) {
+        ReturnVo returnVo = new ReturnVo();
+        returnVo.setCost(0l);
+
         if (ObjectUtils.isEmpty(readerId) || ObjectUtils.isEmpty(documentId) || ObjectUtils.isEmpty(libId) || ObjectUtils.isEmpty(number)) {
             throw new RequestException(HttpStatus.BAD_REQUEST, "读者Id，文档Id,图书馆Id和文档副本编号不能为空");
         }
-        ReserveAndBorrowList record = reserveAndBorrowListDao.findByReaderIdAndDocumentIdAndLibIdAndNumber(readerId, documentId, libId, number);
-        if (record == null || record.getStatus() != DocumentStatus.borrowed) {
+        List<ReserveAndBorrowList> records = reserveAndBorrowListDao.findAllByReaderIdAndDocumentIdAndLibIdAndNumber(readerId, documentId, libId, number);
+        records = records.stream().filter(reserveAndBorrowList -> {
+            boolean isBorrowed = reserveAndBorrowList.getStatus() == DocumentStatus.borrowed;
+            boolean isUnCompleted = reserveAndBorrowList.getIsCompleted() == null || !reserveAndBorrowList.getIsCompleted();
+            return isBorrowed && isUnCompleted;
+        }).collect(Collectors.toList());
+
+
+        if (records == null || records.size() == 0 || records.get(0).getStatus() != DocumentStatus.borrowed) {
             throw new RequestException(HttpStatus.BAD_REQUEST, "没有查询到对应借取文档的记录，无法借书!");
         }
 
+        ReserveAndBorrowList record = records.get(0);
+
         record.setStatus(DocumentStatus.inLib);
         record.setRDateTime(LocalDateTime.now());
+        record.setIsCompleted(true);
 
         Duration duration = Duration.between(record.getBDateTime(), record.getRDateTime());
         if (duration.toDays() > 20) {
@@ -192,18 +222,21 @@ public class ReaderService {
                 cost = 0L;
             }
             cost += (duration.toDays() - 20) * 20;
+            returnVo.setCost(returnVo.getCost()+(duration.toDays() - 20) * 20);
             reader.setCost(cost);
             readerDao.save(reader);
         }
 
-        reserveAndBorrowListDao.deleteById(record.getId());
+        record = reserveAndBorrowListDao.save(record);
 
-        return record;
+        returnVo.setReserveAndBorrowList(record);
+
+        return returnVo;
 
     }
 
     public Reader readerLogin(Long cardNumber) {
-        if (ObjectUtils.isEmpty(cardNumber) ) {
+        if (ObjectUtils.isEmpty(cardNumber)) {
             throw new RequestException(HttpStatus.BAD_REQUEST, "card number不能为空");
         }
         Optional<Reader> res = readerDao.findByCardNumber(cardNumber);
