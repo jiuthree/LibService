@@ -1,7 +1,9 @@
 package com.example.library.pro.service;
 
+import com.example.library.pro.dao.DocumentDao;
 import com.example.library.pro.dao.PublisherDao;
 import com.example.library.pro.exception.RequestException;
+import com.example.library.pro.module.Document;
 import com.example.library.pro.module.Publisher;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,6 +16,9 @@ import java.util.Optional;
 public class PublisherService {
     @Autowired
     PublisherDao publisherDao;
+
+    @Autowired
+    DocumentDao documentDao;
 
     public Publisher getById(Long id) {
         Optional<Publisher> res = publisherDao.findById(id);
@@ -38,5 +43,9 @@ public class PublisherService {
         publisherDao.deleteById(id);
 
         return null;
+    }
+
+    public List<Document> getAllDocuments(Long publisherId) {
+        return documentDao.findAllByPublisherId(publisherId);
     }
 }

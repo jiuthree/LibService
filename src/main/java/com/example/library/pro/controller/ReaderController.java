@@ -1,17 +1,20 @@
 package com.example.library.pro.controller;
 
 import com.example.library.pro.dto.LoginDto;
-import com.example.library.pro.module.Document;
+import com.example.library.pro.module.LibDocuments;
 import com.example.library.pro.module.Reader;
 import com.example.library.pro.module.ReserveAndBorrowList;
 import com.example.library.pro.service.ReaderService;
 import com.example.library.pro.vo.ReaderVo;
+import com.example.library.pro.vo.ReserveAndBorrowDetailVo;
 import com.example.library.pro.vo.ReserveVo;
 import com.example.library.pro.vo.ReturnVo;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 @RestController
 @RequestMapping("/v1/api/reader")
@@ -71,6 +74,12 @@ public class ReaderController {
     public ResponseEntity<ReturnVo> returnDocument(@RequestParam Long readerId, @RequestParam Long documentId, @RequestParam Long libId, @RequestParam Long number) {
 
         return  ResponseEntity.ok(readerService.returnDocument(readerId,documentId,libId,number));
+    }
+
+    @ApiOperation(value = "查询读者借阅的文档列表")
+    @GetMapping("/list/documents")
+    public ResponseEntity<List<ReserveAndBorrowDetailVo>> getBorrowedDocumentsByReaderId(Long readerId) {
+        return ResponseEntity.ok(readerService.getBorrowedDocumentsByReaderId(readerId));
     }
 
 }

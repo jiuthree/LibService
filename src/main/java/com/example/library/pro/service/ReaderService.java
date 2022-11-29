@@ -1,13 +1,16 @@
 package com.example.library.pro.service;
 
 import com.example.library.pro.constants.DocumentStatus;
+import com.example.library.pro.dao.DocumentDao;
 import com.example.library.pro.dao.ReaderDao;
 import com.example.library.pro.dao.ReserveAndBorrowListDao;
 import com.example.library.pro.exception.RequestException;
+import com.example.library.pro.module.Document;
 import com.example.library.pro.module.LibDocuments;
 import com.example.library.pro.module.Reader;
 import com.example.library.pro.module.ReserveAndBorrowList;
 import com.example.library.pro.vo.ReaderVo;
+import com.example.library.pro.vo.ReserveAndBorrowDetailVo;
 import com.example.library.pro.vo.ReserveVo;
 import com.example.library.pro.vo.ReturnVo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,6 +20,7 @@ import org.springframework.util.ObjectUtils;
 
 import java.time.Duration;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -32,6 +36,9 @@ public class ReaderService {
 
     @Autowired
     ReserveAndBorrowListDao reserveAndBorrowListDao;
+
+    @Autowired
+    DocumentDao documentDao;
 
 
     public Reader registerReader(ReaderVo readerVo) {
@@ -246,5 +253,23 @@ public class ReaderService {
 
 
         return res.get();
+    }
+
+    public List<ReserveAndBorrowDetailVo> getBorrowedDocumentsByReaderId(Long readerId) {
+
+        ArrayList<ReserveAndBorrowDetailVo> res = new ArrayList<>();
+        List<ReserveAndBorrowList> records = reserveAndBorrowListDao.findAllByReaderId(readerId).stream().filter(reserveAndBorrowList -> {
+            return reserveAndBorrowList.getStatus() != null && reserveAndBorrowList.getStatus() == DocumentStatus.reserved;
+        }).collect(Collectors.toList());
+        for(ReserveAndBorrowList record:records){
+            Optional<Document> document = documentDao.findById(record.getDocumentId());
+            if(document.isPresent()){
+                ReserveAndBorrowDetailVo reserveAndBorrowDetailVo = new ReserveAndBorrowDetailVo();
+                reserveAndBorrowDetailVo.setDocument(document.get());
+                reserveAndBorrowDetailVo.setReserveAndBorrowList(record);
+                res.add(reserveAndBorrowDetailVo);
+            }
+        }
+        return res;
     }
 }

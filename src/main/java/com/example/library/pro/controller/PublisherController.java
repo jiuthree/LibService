@@ -1,5 +1,6 @@
 package com.example.library.pro.controller;
 
+import com.example.library.pro.module.Document;
 import com.example.library.pro.module.Publisher;
 import com.example.library.pro.service.PublisherService;
 import io.swagger.annotations.ApiOperation;
@@ -39,5 +40,11 @@ public class PublisherController {
     @GetMapping("/delete")
     public ResponseEntity<Void> delete(@RequestParam Long id) {
         return ResponseEntity.ok(publisherService.deleteById(id));
+    }
+
+    @ApiOperation(value = "查询发布者发布的所有文档列表")
+    @GetMapping("/get/documents/all")
+    public ResponseEntity<List<Document>> getAllDocuments(@RequestParam Long publisherId) {
+        return ResponseEntity.ok(publisherService.getAllDocuments(publisherId));
     }
 }
