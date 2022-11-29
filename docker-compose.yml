@@ -1,0 +1,23 @@
+version: "3.7"
+services:
+  lib-service:
+     build: ./
+     ports:
+       - "27023:27023"
+     environment:
+       - server.port=27023
+       - logging.file.path=/root/logs
+       - SET_CONTAINER_TIMEZONE=true
+       - CONTAINER_TIMEZONE=Asia/Shanghai
+     volumes:
+       - "/etc/localtime:/etc/localtime:ro"
+       - "/etc/timezone:/etc/timezone:ro"
+       - "./logs/:/root/logs"
+     deploy:
+       resources:
+         limits:
+           memory: 1024M
+         reservations:
+           memory: 512M
+     container_name: lib-service
+
