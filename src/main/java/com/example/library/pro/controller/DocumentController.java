@@ -61,13 +61,7 @@ public class DocumentController {
     }
 
 
-    @ApiOperation(value = "添加一个新的图书馆库存")
-    @GetMapping("/update/library/inventory")
-    public ResponseEntity<LibDocuments> addLibDocuments(@RequestParam Long libId, @RequestParam Long documentId) {
-        return ResponseEntity.ok(documentService.addLibDocuments(libId, documentId));
-        //需要自动生成新的文档编号  传参是图书馆id和文档id，number是自动生成的，totalNumber也是查询出来的
 
-    }
 
     @ApiOperation(value = "添加一个会议纪要")
     @GetMapping("/add/conference-proceeding")
