@@ -27,5 +27,4 @@ public class ReaderVo {
     Long cardNumber;
 
 
-
 }

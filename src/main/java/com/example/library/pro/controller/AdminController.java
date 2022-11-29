@@ -5,6 +5,7 @@ import com.example.library.pro.module.Reader;
 import com.example.library.pro.service.AdminService;
 import com.example.library.pro.service.DocumentService;
 import com.example.library.pro.vo.LibDocumentDetailVo;
+import com.example.library.pro.vo.LibraryTop10Readers;
 import io.swagger.annotations.ApiOperation;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -51,6 +52,12 @@ public class AdminController {
     public ResponseEntity<List<LibDocumentDetailVo>> searchDocumentCopyStatus(@RequestParam Long documentId, @RequestParam Long number) {
         return ResponseEntity.ok(adminService.searchDocumentCopyStatus(documentId,number));
 
+    }
+
+    @ApiOperation(value = "打印每个图书馆分区排行前10的借书者和他接取书籍的数目")
+    @GetMapping("/library/top10/readerAndDocumentNums")
+    public ResponseEntity<List<LibraryTop10Readers>> findTop10Readers() {
+        return ResponseEntity.ok(adminService.findTop10Readers());
 
     }
 
