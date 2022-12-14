@@ -64,20 +64,20 @@ public class DocumentController {
 
 
     @ApiOperation(value = "添加一个会议纪要")
-    @GetMapping("/add/conference-proceeding")
+    @PostMapping("/add/conference-proceeding")
     public ResponseEntity<ConferenceProceeding> addConferenceProceeding(@RequestBody ConferenceProceedingVo conferenceProceedingVo) {
         return ResponseEntity.ok(documentService.addConferenceProceedingVo(conferenceProceedingVo));
     }
 
 
     @ApiOperation(value = "添加一个书籍")
-    @GetMapping("/add/book")
+    @PostMapping("/add/book")
     public ResponseEntity<Book> addBook(@RequestBody BookVo bookVo) {
         return ResponseEntity.ok(documentService.addBookVo(bookVo));
     }
 
     @ApiOperation(value = "添加一个journal")
-    @GetMapping("/add/journal")
+    @PostMapping("/add/journal")
     public ResponseEntity<JournalVo> addJournal(@RequestBody JournalVo journalVo) {
         return ResponseEntity.ok(documentService.addJournalVo(journalVo));
     }
