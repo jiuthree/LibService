@@ -29,19 +29,19 @@ public class DocumentController {
         return ResponseEntity.ok(documentService.getById(id));
     }
 
-    @ApiOperation(value = "查询所有的在线书籍")
+    @ApiOperation(value = "查询所有的在线文档")
     @GetMapping("/all")
     public ResponseEntity<List<Document>> findAll() {
         return ResponseEntity.ok(documentService.findAll());
     }
 
-    @ApiOperation(value = "根据标题模糊查询所有的在线书籍")
+    @ApiOperation(value = "根据标题模糊查询所有的在线文档")
     @GetMapping("/findByTitleLike")
     public ResponseEntity<List<Document>> findByTitle(@RequestParam String title) {
         return ResponseEntity.ok(documentService.findByTitleLike(title));
     }
 
-    @ApiOperation(value = "根据发布者名称模糊查询所有的在线书籍")
+    @ApiOperation(value = "根据发布者名称模糊查询所有的在线文档")
     @GetMapping("/findByPublisherName")
     public ResponseEntity<List<Document>> findByPublisherName(@RequestParam String publisherName) {
         return ResponseEntity.ok(documentService.findByPublisherName(publisherName));
