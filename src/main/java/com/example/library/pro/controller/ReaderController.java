@@ -28,6 +28,13 @@ public class ReaderController {
         return ResponseEntity.ok(readerService.registerReader(readerVo));
     }
 
+    @ApiOperation(value = "新读者注册", httpMethod = "POST")
+    @PostMapping("/update")
+    public ResponseEntity<Reader> updateReader(@RequestBody ReaderVo readerVo) {
+        return ResponseEntity.ok(readerService.updateReader(readerVo));
+    }
+
+
     @ApiOperation(value = "管理员登录", httpMethod = "POST")
     @PostMapping("/admin/login")
     public ResponseEntity<Reader> adminLogin(@RequestBody LoginDto loginDto) {

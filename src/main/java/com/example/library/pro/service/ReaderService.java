@@ -272,4 +272,23 @@ public class ReaderService {
         }
         return res;
     }
+
+    public Reader updateReader(ReaderVo readerVo) {
+        Optional<Reader> res = readerDao.findByCardNumber(readerVo.getCardNumber());
+
+        if (!res.isPresent()) {
+            throw new RequestException(HttpStatus.BAD_REQUEST, "cardNumber不正确，读者还未注册，无法修改信息");
+        }
+
+        Reader reader = new Reader();
+        reader.setId(readerVo.getId());
+        reader.setPhoneNumber(readerVo.getPhoneNumber());
+        reader.setType(readerVo.getType());
+        reader.setAddress(readerVo.getAddress());
+        reader.setName(readerVo.getName());
+        reader.setCardNumber(readerVo.getCardNumber());
+
+        return readerDao.save(reader);
+
+    }
 }

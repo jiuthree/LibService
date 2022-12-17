@@ -11,6 +11,9 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 public class ReaderVo {
 
+    @ApiModelProperty(value = "读者id，注册读者的时候不用传，修改读者信息的时候要传")
+    Long id;
+
     @ApiModelProperty(value = "居住地址")
     String address;
 
